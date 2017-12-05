@@ -153,8 +153,8 @@ Minv = PreProcessing.get_inv_transform_matrix()
 
 # process_image_file('test1.jpg')
 # process_image_file('test4.jpg')
-# Process_Video_file('project_video.mp4')
+Process_Video_file('project_video.mp4')
 # Process_Video_file('challenge_video.mp4')
 
-for image_file in image_files_names:
-    process_image_file(image_file)
+# for image_file in image_files_names:
+#     process_image_file(image_file)
