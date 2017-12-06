@@ -5,9 +5,9 @@ import matplotlib.pyplot as plt
 import os.path
 import pickle
 
-src = np.float32([[300, 658], [580, 460], [703, 460], [1020, 658]])
+src = np.float32([[203, 720], [585, 460], [695, 460], [1127, 720]])
 
-dst = np.float32([[300, 710], [300, 100], [900, 100], [900, 710]])
+dst = np.float32([[320, 720], [320, 0], [960, 0], [960, 720]])
 
 def get_camera_calibrations():
     cmtx = None
@@ -76,29 +76,36 @@ def get_inv_transform_matrix():
     return invM
 
 
-def get_thresholds(img, s_thresh=(180, 255),sx_thresh=(50, 70)):
+def get_thresholds(img, b_thresh=(0, 110),l_thresh=(225, 255),sx_thresh=(30,100)):
     img = np.copy(img)
     # Convert to HLS color space and separate the V channel
     hls = cv2.cvtColor(img, cv2.COLOR_RGB2HLS).astype(np.float)
-    l_channel = hls[:, :, 1]
+    luv = cv2.cvtColor(img, cv2.COLOR_RGB2LUV).astype(np.float)
+    lab = cv2.cvtColor(img, cv2.COLOR_RGB2LAB).astype(np.float)
+
+    l_channel = luv[:, :, 0]
+    b_channel = lab[:, :, 2]
     s_channel = hls[:, :, 2]
     # Sobel x
-    sobelx = cv2.Sobel(l_channel, cv2.CV_64F, 1, 0)  # Take the derivative in x
+    sobelx = cv2.Sobel(s_channel, cv2.CV_64F, 1, 0)  # Take the derivative in x
     abs_sobelx = np.absolute(sobelx)  # Absolute x derivative to accentuate lines away from horizontal
     scaled_sobelx = np.uint8(255 * abs_sobelx / np.max(abs_sobelx))
+
+    # Threshold x gradient
+    l_binary = np.zeros_like(l_channel)
+    l_binary[(l_channel >= l_thresh[0]) & (l_channel <= l_thresh[1])] = 1
+
+    # Threshold color channel
+    b_binary = np.zeros_like(b_channel)
+    b_binary[(b_channel >= b_thresh[0]) & (b_channel <= b_thresh[1])] = 1
 
     # Threshold x gradient
     sxbinary = np.zeros_like(scaled_sobelx)
     sxbinary[(scaled_sobelx >= sx_thresh[0]) & (scaled_sobelx <= sx_thresh[1])] = 1
 
-    # Threshold color channel
-    s_binary = np.zeros_like(s_channel)
-    s_binary[(s_channel >= s_thresh[0]) & (s_channel <= s_thresh[1])] = 1
-
-
     # Combine the two binary thresholds
-    combined_binary = np.zeros_like(sxbinary)
-    combined_binary[(s_binary == 1)|(sxbinary == 1)] = 1
+    combined_binary = np.zeros_like(l_binary)
+    combined_binary[(b_binary == 1)|(l_binary == 1)|(sxbinary == 1)] = 1
     return combined_binary
 
 

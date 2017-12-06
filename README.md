@@ -49,7 +49,7 @@ To demonstrate this step, I will describe how I apply the distortion correction 
 
 #### 2. Describe how (and identify where in your code) you used color transforms, gradients or other methods to create a thresholded binary image.  Provide an example of a binary image result.
 
-I used a combination of color and gradient thresholds in HLS color domain to generate a binary image. I applied the color threshold on the S layer and perpormed a sobel prt X on the Layer. (thresholding steps at lines 81 through 104 in `PreProcessing.py`).  Here's an example of my output for this step.
+I used a combination of color gradient thresholds in HLS color domain, color threshold in LAB color domain and Lightness threshold in LAB color domain to generate a binary image. I applied the color threshold on the B layer, lightness threshold on L layer and performed a sobel prt X on the S Layer. (thresholding steps at lines 79 through 109 in `PreProcessing.py`).  Here's an example of my output for this step.
 
 ![alt text](./output_images/test2_1_binary.jpg)
 
@@ -60,10 +60,10 @@ The code for my perspective transform includes a function called `get_transform_
 
 | Source        | Destination   | 
 |:-------------:|:-------------:| 
-| 300, 658      | 300, 710        | 
-| 580, 460      | 300, 100      |
-| 703, 460     | 900, 100      |
-| 1020, 658      | 900, 710        |
+| 203, 720      | 320, 720        | 
+| 585, 460      | 320, 0      |
+| 695, 460     | 960, 0      |
+| 1127, 720      | 960, 720        |
 
 An example of a perspective transformed image is bellow.
 
@@ -81,7 +81,7 @@ I did this in lines 6 through 14 in my code in `support.py`
 
 #### 6. Provide an example image of your result plotted back down onto the road such that the lane area is identified clearly.
 
-I implemented this step in lines 124 through 148 in my code in `main.py` in the function `draw_lane_area()`.  Here is an example of my result on a test image:
+I implemented this step in lines 125 through 149 in my code in `main.py` in the function `draw_lane_area()`.  Here is an example of my result on a test image:
 
 ![alt text](./output_images/test2_4_output.jpg)
 

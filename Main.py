@@ -46,7 +46,7 @@ def video_pipeline(img):
     dst, binary, binary_warped, lanes,output = pipeline(img,isVideo=True)
     return output
 
-smoothing_frame_counts = 5
+smoothing_frame_counts = 10
 
 left_fitx_buffer = collections.deque(maxlen=smoothing_frame_counts)
 right_fitx_buffer = collections.deque(maxlen=smoothing_frame_counts)
@@ -104,22 +104,23 @@ def pipeline(img,isVideo=False):
     color = (255, 255, 255)
     cv2.putText(output, 'curve = ' + str((lcurve + rcurve) / 2) + ' m', (10, 100), Font, 1, color, 2, cv2.LINE_AA)
 
-    cv2.putText(output, 'Vehicle is ' + str(abs(shiftFromLaneCenter_m)) + ' (m) ' + side + ' of lane center', (10, 150), Font, 1,color, 2, cv2.LINE_AA)
+    cv2.putText(output, 'Vehicle is ' + str(shiftFromLaneCenter_m) + ' (m) ' + side + ' of lane center', (10, 150), Font, 1,color, 2, cv2.LINE_AA)
 
     return undst,binary,binary_warped,lanes,output
+    # return undst,binary,binary_warped,None,None
 
 def calculate_shift_from_lane_center(warped,left_fitx,right_fitx):
-    LaneCenterx = (right_fitx[-1]-left_fitx[-1])/2 + left_fitx[-1]
+    LaneCenterx = (right_fitx[-1]+left_fitx[-1])/2
 
     shiftFromLaneCenter = warped.shape[1]/2 - LaneCenterx #Pixels
 
     shiftFromLaneCenter_m = shiftFromLaneCenter * Support.xm_per_pix #meters
 
-    if shiftFromLaneCenter_m > 0:
+    if shiftFromLaneCenter > 0:
         side = 'Right'
     else:
         side = 'Left'
-    return shiftFromLaneCenter_m,side
+    return abs(shiftFromLaneCenter_m),side
 
 def draw_lane_area(undist,warped,ploty,leftx, lefty, rightx, righty,isVideo=False):
     left_fit, right_fit, dummy = Support.fit_polylines(warped.shape[0], leftx, lefty, rightx, righty, x_scale_factor=1, y_scale_factor=1)

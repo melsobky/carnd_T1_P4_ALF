@@ -1,7 +1,7 @@
 import numpy as np
 # Define conversions in x and y from pixels space to meters
-ym_per_pix = 3/80 # meters per pixel in y dimension
-xm_per_pix = 3.7/585 # meters per pixel in x dimension
+ym_per_pix = 30/720 # meters per pixel in y dimension
+xm_per_pix = 3.7/700 # meters per pixel in x dimension
 
 def get_real_lanes_curvature(ploty, leftx, lefty, rightx, righty):
     ploty_scaled = ploty*ym_per_pix

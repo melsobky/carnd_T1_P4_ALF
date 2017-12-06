@@ -4,7 +4,7 @@ import Support as Support
 
 error_counter = 0
 good_frames = 0
-error_limit = 10
+error_limit = 4
 
 old_leftx=None
 old_lefty=None
@@ -41,8 +41,8 @@ def get_lane_lines(binary_warped,is_video_frame=False):
                 # Checking that they are separated by approximately the right distance horizontally
                 # Checking that they are roughly parallel
                 if not is_lane_curvature_accepted(ploty, leftx, lefty, rightx, righty) or not (
-                    3.6 / Support.xm_per_pix) < (right_fitx[y_mid] - left_fitx[y_mid]) < (
-                    3.8 / Support.xm_per_pix):
+                    3.4 / Support.xm_per_pix) < (right_fitx[y_mid] - left_fitx[y_mid]) < (
+                    4.0 / Support.xm_per_pix):
                     # checks failed
                     # increase error counter
                     error_counter = error_counter + 1
@@ -107,8 +107,6 @@ def is_lane_curvature_accepted(ploty, leftx, lefty, rightx, righty):
         return True # Almost straight lanes
     elif (left_curverad < 80 or right_curverad < 80):
         return False
-    elif (abs(left_curverad - right_curverad) > 100):
-        return False  # lane curves has big difference
     # elif (left_fit[0] > 0 and right_fit[0] < 0) or (right_fit[0] > 0 and left_fit[0] < 0):
     #     return False # same curvature wit opposite direction
     else:
